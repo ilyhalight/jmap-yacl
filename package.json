@@ -55,7 +55,7 @@
     "build:declaration": "tsc --project tsconfig.type.json --outdir ./dist",
     "build:typebox": "bun run typebox-gen.ts",
     "build:doc": "typedoc --options typedoc.json --tsconfig tsconfig.type.json",
-    "publish": "bun run build && npm publish --access public",
+    "publish": "bun run build:bun && npm publish --access public",
     "prepare": "bunx husky"
   },
   "type": "module",
