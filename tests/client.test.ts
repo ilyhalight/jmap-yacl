@@ -57,3 +57,19 @@ test.if(!isFake)("Get identify", async () => {
     ((data as JMAP.GetResponse).list[0] as JMAPMail.Identity).name,
   ).toEqual("Toil");
 });
+
+test.if(!isFake)("Download blob", async () => {
+  const client = new JMAPClient(fakeCreds);
+
+  await client.connect(jmapUrl);
+
+  const res = await client.downloadBlob(
+    (client.session as JMAP.Session).primaryAccounts[JMAP.Using.core],
+    "cg1rzcwi2pbvagqqwitsqy3ygbzod77cgxscsomsxmnpu1xxbn7qyaaaaoyctttn",
+    "text/html",
+  );
+
+  console.log(res);
+
+  expect(typeof res).toEqual("string");
+});

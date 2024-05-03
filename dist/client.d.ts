@@ -28,6 +28,7 @@ export default class JMAPClient {
     constructor(credentials: Credentials);
     request<T = unknown>(url: string, opts?: RequestOpts | undefined): Promise<JMAP.Response<JMAP.ProblemDetails | T>>;
     connect(url: string): Promise<this>;
+    downloadBlob(accountId: JMAP.Id, blobId: JMAP.Id, contentType: string): Promise<string | JMAP.ProblemDetails>;
 }
 export {};
 //# sourceMappingURL=client.d.ts.map

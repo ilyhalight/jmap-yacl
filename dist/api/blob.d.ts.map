@@ -1,0 +1,1 @@
+{"version":3,"file":"blob.d.ts","sourceRoot":"","sources":["../../src/api/blob.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,IAAI,MAAM,eAAe,CAAC;AACtC,OAAO,UAAU,MAAM,QAAQ,CAAC;AAEhC,MAAM,CAAC,OAAO,OAAO,OAAQ,SAAQ,UAAU;IACvC,QAAQ,CAAC,SAAS,EAAE,IAAI,CAAC,EAAE,EAAE,MAAM,EAAE,IAAI,CAAC,EAAE,EAAE,QAAQ,EAAE,MAAM;;;;CAwBrE"}

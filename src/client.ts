@@ -29,7 +29,6 @@ export default class JMAPClient {
   identity: IdentityAPI;
   emailSubmission: EmailSubmissionAPI;
   vacationResponse: VacationResponseAPI;
-  // TODO: BLOB API
 
   private getAuthToken(credentials: Credentials): string {
     const token = btoa(`${credentials.username}:${credentials.password}`);
@@ -77,18 +76,21 @@ export default class JMAPClient {
         "Cache-Control": "no-cache, no-store, must-revalidate", // todo: add if blob download Cache-Control: private, immutable, max-age=31536000
       },
     });
-
     return (await response.json()) as JMAP.Response<JMAP.ProblemDetails | T>;
   }
 
   async connect(url: string) {
     try {
-      const result = (await this.request(url)) as unknown as
+      const result = (await this.request(url, undefined)) as unknown as
         | JMAP.ProblemDetails
         | JMAP.Session;
       if (Object.hasOwn(result, "type")) {
         throw new Error(
-          `The server returned an error "${(result as JMAP.ProblemDetails)?.title}" instead of the session. Details: ${(result as JMAP.ProblemDetails)?.detail}`,
+          `The server returned an error "${
+            (result as JMAP.ProblemDetails)?.title
+          }" instead of the session. Details: ${
+            (result as JMAP.ProblemDetails)?.detail
+          }`,
         );
       }
 
@@ -98,5 +100,42 @@ export default class JMAPClient {
     }
 
     return this;
+  }
+
+  // it was not done through this.blog.x because it requires unnecessary logic changes
+  async downloadBlob(accountId: JMAP.Id, blobId: JMAP.Id, contentType: string) {
+    if (!this.session?.downloadUrl) {
+      return {
+        type: "Unauthorized",
+        description:
+          "The link to download the blob isn't available because you are unauthorized",
+      } as JMAP.ProblemDetails;
+    }
+
+    const res = await fetch(
+      this.session?.downloadUrl
+        .replace("http://", "https://")
+        .replace("{accountId}", accountId)
+        .replace("{blobId}", blobId)
+        .replace("{name}", "blob")
+        .replace("{type}", contentType),
+      {
+        method: "GET",
+        headers: {
+          Authorization: this.authToken,
+          "User-Agent": JMAPClient.userAgent,
+          "Cache-Control": "private, immutable, max-age=31536000",
+        },
+      },
+    );
+
+    const resContentType = res.headers.get("content-type") ?? "";
+    if (
+      ["application/problem+json", "application/json"].includes(resContentType)
+    ) {
+      return (await res.json()) as JMAP.ProblemDetails;
+    }
+
+    return res.text();
   }
 }

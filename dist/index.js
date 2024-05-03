@@ -351,7 +351,7 @@ class JMAPClient {
   }
   async connect(url) {
     try {
-      const result = await this.request(url);
+      const result = await this.request(url, undefined);
       if (Object.hasOwn(result, "type")) {
         throw new Error(`The server returned an error "${result?.title}" instead of the session. Details: ${result?.detail}`);
       }
@@ -360,6 +360,27 @@ class JMAPClient {
       console.error("Failed get session from url:", err);
     }
     return this;
+  }
+  async downloadBlob(accountId, blobId, contentType) {
+    if (!this.session?.downloadUrl) {
+      return {
+        type: "Unauthorized",
+        description: "The link to download the blob isn't available because you are unauthorized"
+      };
+    }
+    const res = await fetch(this.session?.downloadUrl.replace("http://", "https://").replace("{accountId}", accountId).replace("{blobId}", blobId).replace("{name}", "blob").replace("{type}", contentType), {
+      method: "GET",
+      headers: {
+        Authorization: this.authToken,
+        "User-Agent": JMAPClient.userAgent,
+        "Cache-Control": "private, immutable, max-age=31536000"
+      }
+    });
+    const resContentType = res.headers.get("content-type") ?? "";
+    if (["application/problem+json", "application/json"].includes(resContentType)) {
+      return await res.json();
+    }
+    return res.text();
   }
 }
 // src/types/mail.ts
