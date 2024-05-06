@@ -269,14 +269,6 @@ export type UploadingBlobResponse = {
   size: number; // uint
 };
 
-// RFC 8620 (6.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.2
-export type DownloadingBlobResponse = {
-  accountId: Id;
-  blobId: Id;
-  type: string;
-  name: string;
-};
-
 // RFC 8620 (6.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.3
 export type CopyBlobRequest = {
   fromAccountId: Id;
