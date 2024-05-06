@@ -2,16 +2,19 @@ import { expect, test } from "bun:test";
 import JMAPClient from "../src/client";
 import * as JMAP from "../src/types/jmap";
 import * as JMAPMail from "../src/types/mail";
+import { pathToFileURL } from "bun";
 
 const fakeCreds = {
-  username: "username",
-  password: "password",
+  username: process.env.JMAP_USERNAME ?? "username",
+  password: process.env.JMAP_PASSWORD ?? "password",
 };
 
 const isFake =
   fakeCreds.username === "username" && fakeCreds.password === "password";
 
-const jmapUrl = "https://YOURDOMAIN/.well-known/jmap";
+const enabledUploadingBlob = false;
+
+const jmapUrl = process.env.JMAP_URL ?? "https://YOURDOMAIN/.well-known/jmap";
 
 test("Check token algo", async () => {
   const client = new JMAPClient({
@@ -63,13 +66,28 @@ test.if(!isFake)("Download blob", async () => {
 
   await client.connect(jmapUrl);
 
-  const res = await client.downloadBlob(
+  const res = await client.blob.download(
     (client.session as JMAP.Session).primaryAccounts[JMAP.Using.core],
     "cg1rzcwi2pbvagqqwitsqy3ygbzod77cgxscsomsxmnpu1xxbn7qyaaaaoyctttn",
     "text/html",
   );
 
-  console.log(res);
-
   expect(typeof res).toEqual("string");
+});
+
+test.if(!isFake && enabledUploadingBlob)("Upload blob", async () => {
+  const client = new JMAPClient(fakeCreds);
+
+  await client.connect(jmapUrl);
+
+  const file = Bun.file(pathToFileURL("./tests/upload.png"));
+  const content = await file.arrayBuffer();
+  const blob = new Blob([content], { type: file.type });
+
+  const res = await client.blob.upload(
+    (client.session as JMAP.Session).primaryAccounts[JMAP.Using.core],
+    blob,
+  );
+
+  expect((res as JMAP.UploadingBlobResponse).type).toEqual("image/png");
 });

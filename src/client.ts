@@ -9,6 +9,7 @@ import SearchSnippetAPI from "./api/searchSnippet";
 import IdentityAPI from "./api/identity";
 import VacationResponseAPI from "./api/VacationResponse";
 import EmailSubmissionAPI from "./api/emailSubmission";
+import BlobAPI from "./api/blob";
 
 type RequestOpts = {
   using: JMAP.Using[];
@@ -18,17 +19,18 @@ type RequestOpts = {
 export default class JMAPClient {
   static userAgent: string = `jmap-yacl/${version}`;
 
-  private authToken: string;
+  readonly authToken: string;
   session: JMAP.Session | undefined;
 
-  core: CoreAPI;
-  mailbox: MailBoxAPI;
-  thread: ThreadAPI;
-  email: EmailAPI;
-  searchSnippet: SearchSnippetAPI;
-  identity: IdentityAPI;
-  emailSubmission: EmailSubmissionAPI;
-  vacationResponse: VacationResponseAPI;
+  core!: CoreAPI;
+  mailbox!: MailBoxAPI;
+  thread!: ThreadAPI;
+  email!: EmailAPI;
+  searchSnippet!: SearchSnippetAPI;
+  identity!: IdentityAPI;
+  emailSubmission!: EmailSubmissionAPI;
+  vacationResponse!: VacationResponseAPI;
+  blob!: BlobAPI;
 
   private getAuthToken(credentials: Credentials): string {
     const token = btoa(`${credentials.username}:${credentials.password}`);
@@ -38,6 +40,10 @@ export default class JMAPClient {
   constructor(credentials: Credentials) {
     this.authToken = this.getAuthToken(credentials);
 
+    this.updateAPI();
+  }
+
+  updateAPI() {
     this.core = new CoreAPI(this);
     this.mailbox = new MailBoxAPI(this);
     this.thread = new ThreadAPI(this);
@@ -46,6 +52,7 @@ export default class JMAPClient {
     this.identity = new IdentityAPI(this);
     this.emailSubmission = new EmailSubmissionAPI(this);
     this.vacationResponse = new VacationResponseAPI(this);
+    this.blob = new BlobAPI(this);
   }
 
   async request<T = unknown>(
@@ -73,7 +80,7 @@ export default class JMAPClient {
         Authorization: this.authToken,
         "Content-Type": "application/json",
         "User-Agent": JMAPClient.userAgent,
-        "Cache-Control": "no-cache, no-store, must-revalidate", // todo: add if blob download Cache-Control: private, immutable, max-age=31536000
+        "Cache-Control": "no-cache, no-store, must-revalidate",
       },
     });
     return (await response.json()) as JMAP.Response<JMAP.ProblemDetails | T>;
@@ -96,46 +103,18 @@ export default class JMAPClient {
 
       this.session = result as JMAP.Session;
     } catch (err) {
+      this.session = undefined;
       console.error("Failed get session from url:", err);
     }
 
+    this.updateAPI();
     return this;
   }
 
-  // it was not done through this.blog.x because it requires unnecessary logic changes
+  /**
+   * @deprecated Migrate to client.blob.download. This method will be removed in a future update.
+   */
   async downloadBlob(accountId: JMAP.Id, blobId: JMAP.Id, contentType: string) {
-    if (!this.session?.downloadUrl) {
-      return {
-        type: "Unauthorized",
-        description:
-          "The link to download the blob isn't available because you are unauthorized",
-      } as JMAP.ProblemDetails;
-    }
-
-    const res = await fetch(
-      this.session?.downloadUrl
-        .replace("http://", "https://")
-        .replace("{accountId}", accountId)
-        .replace("{blobId}", blobId)
-        .replace("{name}", "blob")
-        .replace("{type}", contentType),
-      {
-        method: "GET",
-        headers: {
-          Authorization: this.authToken,
-          "User-Agent": JMAPClient.userAgent,
-          "Cache-Control": "private, immutable, max-age=31536000",
-        },
-      },
-    );
-
-    const resContentType = res.headers.get("content-type") ?? "";
-    if (
-      ["application/problem+json", "application/json"].includes(resContentType)
-    ) {
-      return (await res.json()) as JMAP.ProblemDetails;
-    }
-
-    return res.text();
+    return await this.blob.download(accountId, blobId, contentType);
   }
 }
