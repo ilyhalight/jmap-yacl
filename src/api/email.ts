@@ -1,8 +1,8 @@
 import * as JMAP from "../types/jmap";
 import * as JMAPMail from "../types/mail";
-import ExampleAPI from "./base";
+import BaseAPI from "./base";
 
-export default class EmailAPI extends ExampleAPI {
+export default class EmailAPI extends BaseAPI {
   async get(args: JMAPMail.EmailGetRequest) {
     return this.client.request<JMAP.GetResponse<JMAPMail.Email[]>>("/jmap", {
       using: [JMAP.Using.mail],

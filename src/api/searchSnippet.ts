@@ -1,8 +1,8 @@
 import * as JMAP from "../types/jmap";
 import * as JMAPMail from "../types/mail";
-import ExampleAPI from "./base";
+import BaseAPI from "./base";
 
-export default class SearchSnippetAPI extends ExampleAPI {
+export default class SearchSnippetAPI extends BaseAPI {
   async get(args: JMAPMail.SearchSnippetGetRequest) {
     return this.client.request<JMAPMail.SearchSnippetGetResponse>("/jmap", {
       using: [JMAP.Using.mail],

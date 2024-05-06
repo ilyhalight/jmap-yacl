@@ -1,7 +1,7 @@
 import * as JMAP from "../types/jmap";
-import ExampleAPI from "./base";
+import BaseAPI from "./base";
 
-export default class CoreAPI extends ExampleAPI {
+export default class CoreAPI extends BaseAPI {
   async echo(args: object) {
     return this.client.request("/jmap", {
       using: [JMAP.Using.core],
