@@ -1,10 +1,11 @@
 # jmap-yacl
 
 [![GitHub Actions](https://github.com/ilyhalight/jmap-yacl/actions/workflows/ci.yml/badge.svg)](https://github.com/ilyhalight/jmap-yacl/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/bundlejs/size/jmap-yacl)](https://www.npmjs.com/package/jmap-yacl)
 [![ru](https://img.shields.io/badge/%D1%8F%D0%B7%D1%8B%D0%BA-%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9%20%F0%9F%87%B7%F0%9F%87%BA-white)](README-RU.md)
 [![en](https://img.shields.io/badge/lang-English%20%F0%9F%87%AC%F0%9F%87%A7-white)](README.md)
 
-Another client library for working with the JMAP, which supports working with JavaScript, TypeScript, and also has built-in types for Typebox.
+Another lightweight client library for working with the JMAP, which supports working with JavaScript, TypeScript, and also has built-in types for Typebox.
 
 ## Installation
 
@@ -26,7 +27,7 @@ The library was developed and tested using [stalwart mail-server](https://github
 
 Implemented:
 
-- JMAP standard according to [RFC 8620](https://datatracker.ietf.org/doc/rfc8620/) (without Push and working with Blob)
+- JMAP standard according to [RFC 8620](https://datatracker.ietf.org/doc/rfc8620/) (without Push)
 - JMAP Mail standard according to [RFC 8621](https://datatracker.ietf.org/doc/rfc8621/)
 
 Inspiration:
