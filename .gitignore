@@ -1,6 +1,6 @@
 .vscode
 .pytest_cache
-
+.env
 
 # dependencies
 /node_modules
