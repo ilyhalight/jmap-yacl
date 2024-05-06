@@ -190,12 +190,6 @@ export type UploadingBlobResponse = {
     type: string;
     size: number;
 };
-export type DownloadingBlobResponse = {
-    accountId: Id;
-    blobId: Id;
-    type: string;
-    name: string;
-};
 export type CopyBlobRequest = {
     fromAccountId: Id;
     accountId: Id;

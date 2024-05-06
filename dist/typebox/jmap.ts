@@ -320,14 +320,6 @@ type: Type.String(),
 size: Type.Number()
 })
 
-export type DownloadingBlobResponse = Static<typeof DownloadingBlobResponse>
-export const DownloadingBlobResponse = Type.Object({
-accountId: Id,
-blobId: Id,
-type: Type.String(),
-name: Type.String()
-})
-
 export type CopyBlobRequest = Static<typeof CopyBlobRequest>
 export const CopyBlobRequest = Type.Object({
 fromAccountId: Id,

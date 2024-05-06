@@ -9,7 +9,7 @@ var __export = (target, all) => {
     });
 };
 // package.json
-var version = "1.0.0";
+var version = "1.1.0";
 
 // src/types/jmap.ts
 var exports_jmap = {};
@@ -59,7 +59,7 @@ var Using;
 })(Using || (Using = {}));
 
 // src/api/base.ts
-class ExampleAPI {
+class BaseAPI {
   client;
   constructor(client) {
     this.client = client;
@@ -67,7 +67,7 @@ class ExampleAPI {
 }
 
 // src/api/core.ts
-class CoreAPI extends ExampleAPI {
+class CoreAPI extends BaseAPI {
   constructor() {
     super(...arguments);
   }
@@ -80,7 +80,7 @@ class CoreAPI extends ExampleAPI {
 }
 
 // src/api/mailbox.ts
-class MailAPI extends ExampleAPI {
+class MailAPI extends BaseAPI {
   constructor() {
     super(...arguments);
   }
@@ -117,7 +117,7 @@ class MailAPI extends ExampleAPI {
 }
 
 // src/api/thread.ts
-class ThreadAPI extends ExampleAPI {
+class ThreadAPI extends BaseAPI {
   constructor() {
     super(...arguments);
   }
@@ -136,7 +136,7 @@ class ThreadAPI extends ExampleAPI {
 }
 
 // src/api/email.ts
-class EmailAPI extends ExampleAPI {
+class EmailAPI extends BaseAPI {
   constructor() {
     super(...arguments);
   }
@@ -191,7 +191,7 @@ class EmailAPI extends ExampleAPI {
 }
 
 // src/api/searchSnippet.ts
-class SearchSnippetAPI extends ExampleAPI {
+class SearchSnippetAPI extends BaseAPI {
   constructor() {
     super(...arguments);
   }
@@ -204,7 +204,7 @@ class SearchSnippetAPI extends ExampleAPI {
 }
 
 // src/api/identity.ts
-class IdentityAPI extends ExampleAPI {
+class IdentityAPI extends BaseAPI {
   constructor() {
     super(...arguments);
   }
@@ -229,7 +229,7 @@ class IdentityAPI extends ExampleAPI {
 }
 
 // src/api/VacationResponse.ts
-class VacationResponseAPI extends ExampleAPI {
+class VacationResponseAPI extends BaseAPI {
   constructor() {
     super(...arguments);
   }
@@ -252,7 +252,7 @@ class VacationResponseAPI extends ExampleAPI {
 }
 
 // src/api/emailSubmission.ts
-class EmailSubmissionAPI extends ExampleAPI {
+class EmailSubmissionAPI extends BaseAPI {
   constructor() {
     super(...arguments);
   }
@@ -300,6 +300,62 @@ class EmailSubmissionAPI extends ExampleAPI {
   }
 }
 
+// src/api/blob.ts
+class BlobAPI extends BaseAPI {
+  client2;
+  session;
+  constructor(client2) {
+    super(client2);
+    this.client = client2;
+    this.session = client2.session;
+  }
+  async download(accountId, blobId, contentType) {
+    if (!this.session?.downloadUrl) {
+      return {
+        type: "Unauthorized",
+        description: "The link to download the blob isn't available because you are unauthorized"
+      };
+    }
+    const res = await fetch(this.session?.downloadUrl.replace("http://", "https://").replace("{accountId}", accountId).replace("{blobId}", blobId).replace("{name}", "blob").replace("{type}", contentType), {
+      method: "GET",
+      headers: {
+        Authorization: this.client.authToken,
+        "User-Agent": JMAPClient.userAgent,
+        "Cache-Control": "private, immutable, max-age=31536000"
+      }
+    });
+    const resContentType = res.headers.get("content-type") ?? "";
+    if (["application/problem+json", "application/json"].includes(resContentType)) {
+      return await res.json();
+    }
+    return res.text();
+  }
+  async upload(accountId, content) {
+    if (!this.session?.uploadUrl) {
+      return {
+        type: "Unauthorized",
+        description: "The link to upload the blob isn't available because you are unauthorized"
+      };
+    }
+    const res = await fetch(this.session?.uploadUrl.replace("http://", "https://").replace("{accountId}", accountId), {
+      method: "POST",
+      body: content,
+      headers: {
+        Authorization: this.client.authToken,
+        "User-Agent": JMAPClient.userAgent,
+        "Cache-Control": "no-cache, no-store, must-revalidate"
+      }
+    });
+    return await res.json();
+  }
+  async copy(args) {
+    return this.client.request("/jmap", {
+      using: [Using.mail],
+      invocation: ["Blob/copy", args, "single.Blob/copy"]
+    });
+  }
+}
+
 // src/client.ts
 class JMAPClient {
   static userAgent = `jmap-yacl/${version}`;
@@ -313,12 +369,16 @@ class JMAPClient {
   identity;
   emailSubmission;
   vacationResponse;
+  blob;
   getAuthToken(credentials) {
     const token = btoa(`${credentials.username}:${credentials.password}`);
     return `Basic ${token}`;
   }
   constructor(credentials) {
     this.authToken = this.getAuthToken(credentials);
+    this.updateAPI();
+  }
+  updateAPI() {
     this.core = new CoreAPI(this);
     this.mailbox = new MailAPI(this);
     this.thread = new ThreadAPI(this);
@@ -327,6 +387,7 @@ class JMAPClient {
     this.identity = new IdentityAPI(this);
     this.emailSubmission = new EmailSubmissionAPI(this);
     this.vacationResponse = new VacationResponseAPI(this);
+    this.blob = new BlobAPI(this);
   }
   async request(url, opts = undefined) {
     const isAbsolute = url.startsWith("http") || typeof this.session === "undefined";
@@ -357,30 +418,14 @@ class JMAPClient {
       }
       this.session = result;
     } catch (err) {
+      this.session = undefined;
       console.error("Failed get session from url:", err);
     }
+    this.updateAPI();
     return this;
   }
   async downloadBlob(accountId, blobId, contentType) {
-    if (!this.session?.downloadUrl) {
-      return {
-        type: "Unauthorized",
-        description: "The link to download the blob isn't available because you are unauthorized"
-      };
-    }
-    const res = await fetch(this.session?.downloadUrl.replace("http://", "https://").replace("{accountId}", accountId).replace("{blobId}", blobId).replace("{name}", "blob").replace("{type}", contentType), {
-      method: "GET",
-      headers: {
-        Authorization: this.authToken,
-        "User-Agent": JMAPClient.userAgent,
-        "Cache-Control": "private, immutable, max-age=31536000"
-      }
-    });
-    const resContentType = res.headers.get("content-type") ?? "";
-    if (["application/problem+json", "application/json"].includes(resContentType)) {
-      return await res.json();
-    }
-    return res.text();
+    return await this.blob.download(accountId, blobId, contentType);
   }
 }
 // src/types/mail.ts

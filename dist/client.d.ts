@@ -8,13 +8,14 @@ import SearchSnippetAPI from "./api/searchSnippet";
 import IdentityAPI from "./api/identity";
 import VacationResponseAPI from "./api/VacationResponse";
 import EmailSubmissionAPI from "./api/emailSubmission";
+import BlobAPI from "./api/blob";
 type RequestOpts = {
     using: JMAP.Using[];
     invocation: JMAP.Invocation;
 };
 export default class JMAPClient {
     static userAgent: string;
-    private authToken;
+    readonly authToken: string;
     session: JMAP.Session | undefined;
     core: CoreAPI;
     mailbox: MailBoxAPI;
@@ -24,10 +25,15 @@ export default class JMAPClient {
     identity: IdentityAPI;
     emailSubmission: EmailSubmissionAPI;
     vacationResponse: VacationResponseAPI;
+    blob: BlobAPI;
     private getAuthToken;
     constructor(credentials: Credentials);
+    updateAPI(): void;
     request<T = unknown>(url: string, opts?: RequestOpts | undefined): Promise<JMAP.Response<JMAP.ProblemDetails | T>>;
     connect(url: string): Promise<this>;
+    /**
+     * @deprecated Migrate to client.blob.download. This method will be removed in a future update.
+     */
     downloadBlob(accountId: JMAP.Id, blobId: JMAP.Id, contentType: string): Promise<string | JMAP.ProblemDetails>;
 }
 export {};

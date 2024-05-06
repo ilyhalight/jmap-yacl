@@ -1,7 +1,7 @@
 import * as JMAP from "../types/jmap";
 import * as JMAPMail from "../types/mail";
-import ExampleAPI from "./base";
-export default class EmailAPI extends ExampleAPI {
+import BaseAPI from "./base";
+export default class EmailAPI extends BaseAPI {
     get(args: JMAPMail.EmailGetRequest): Promise<JMAP.Response<JMAP.ProblemDetails | JMAP.GetResponse<JMAPMail.Email[]>>>;
     changes(args: JMAP.ChangesRequest): Promise<JMAP.Response<JMAP.ProblemDetails | JMAP.ChangesResponse>>;
     query(args: JMAPMail.EmailQueryRequest): Promise<JMAP.Response<JMAP.ProblemDetails | JMAP.QueryResponse>>;
