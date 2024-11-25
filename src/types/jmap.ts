@@ -1,14 +1,22 @@
-// RFC 8620 (1.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-1.2
-// allowed characters are the ASCII alphanumeric characters ("A-Za-z0-9"), hyphen ("-"), and underscore ("_").
+/**
+ * RFC 8620 (1.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-1.2
+ * allowed characters are the ASCII alphanumeric characters ("A-Za-z0-9"), hyphen ("-"), and underscore ("_").
+ */
 export type Id = string;
 
-// RFC 8620 (1.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-1.4
+/**
+ * RFC 8620 (1.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-1.4
+ */
 export type Date = string;
 
-// RFC 8620 (1.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-1.4
+/**
+ * RFC 8620 (1.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-1.4
+ */
 export type UTCDate = string;
 
-// RFC 8620 (2) - https://datatracker.ietf.org/doc/html/rfc8620#section-2
+/**
+ * RFC 8620 (2) - https://datatracker.ietf.org/doc/html/rfc8620#section-2
+ */
 export type Account<Capatibility extends string = string> = {
   name: string;
   isPersonal: boolean;
@@ -16,7 +24,9 @@ export type Account<Capatibility extends string = string> = {
   accountCapabilities: Record<Capatibility, unknown>;
 };
 
-// RFC 8620 (2) - https://datatracker.ietf.org/doc/html/rfc8620#section-2
+/**
+ * RFC 8620 (2) - https://datatracker.ietf.org/doc/html/rfc8620#section-2
+ */
 export type Session<Capatibility extends string = string> = {
   capatibilities: Record<Capatibility, unknown>;
   // "urn:ietf:params:jmap:core": {
@@ -39,37 +49,50 @@ export type Session<Capatibility extends string = string> = {
   state: string;
 };
 
-// RFC 8620 (3.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.2
+/**
+ * RFC 8620 (3.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.2
+ */
 export type Invocation<T = unknown> = [
   name: string,
   arguments: T,
   methodCallId: string,
 ];
 
-// RFC 8620 (3.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.3
+/**
+ * RFC 8620 (3.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.3
+ */
 export type Request<T = unknown> = {
   using: string[];
   methodCalls: Invocation<T>[];
   createdIds?: Record<Id, Id>;
 };
 
-// RFC 8620 (3.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.4
+/**
+ * RFC 8620 (3.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.4
+ */
 export type Response<T = unknown> = {
   methodResponses: Invocation<T>[];
   createdIds?: Record<Id, Id>;
   sessionState: string;
 };
 
-// RFC 7807 (3.1) - https://datatracker.ietf.org/doc/html/rfc7807/#section-3.1
+/**
+ * RFC 7807 (3.1) - https://datatracker.ietf.org/doc/html/rfc7807/#section-3.1
+ */
 export type ProblemDetails = {
-  type: string; // about:blank or relative URIs
+  /**
+   * about:blank or relative URIs
+   */
+  type: string;
   status?: number;
   title?: string;
   detail?: string;
   instance?: string;
 };
 
-// RFC 8620 (3.6.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.6.1
+/**
+ * RFC 8620 (3.6.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.6.1
+ */
 export enum RequestErrorType {
   unknownCapatibility = "urn:ietf:params:jmap:error:unknownCapability",
   notJSON = "urn:ietf:params:jmap:error:notJSON",
@@ -77,7 +100,9 @@ export enum RequestErrorType {
   limit = "urn:ietf:params:jmap:error:limit",
 }
 
-// RFC 8620 (3.6.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.6.2
+/**
+ * RFC 8620 (3.6.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.6.2
+ */
 export enum MethodErrorType {
   serverUnavailable = "serverUnavailable",
   serverFail = "serverFail",
@@ -91,14 +116,15 @@ export enum MethodErrorType {
   accountReadOnly = "accountReadOnly",
 }
 
-// RFC 8620 (3.7) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.7
+/**
+ * RFC 8620 (3.7) - https://datatracker.ietf.org/doc/html/rfc8620#section-3.7
+ */
 export type ResultReference = {
   resultOf: string;
   name: string;
   path: string;
 };
 
-// захотелось так
 export enum Using {
   core = "urn:ietf:params:jmap:core",
   mail = "urn:ietf:params:jmap:mail",
@@ -106,15 +132,25 @@ export enum Using {
   vacationresponse = "urn:ietf:params:jmap:vacationresponse",
 }
 
-// RFC 8620 (5.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.1
+/**
+ * RFC 8620 (5.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.1
+ */
 export type GetRequest = {
   accountId: Id;
-  ids?: Id[] | null; // If null, then *all* records of the data type are returned, if this is supported for that data type and the number of records does not exceed the "maxObjectsInGet" limit.
-  properties?: string[] | null; // If null, return all props
+  /**
+   * If null, then *all* records of the data type are returned, if this is supported for that data type and the number of records does not exceed the "maxObjectsInGet" limit.
+   */
+  ids?: Id[] | null;
+  /**
+   * If null, return all props
+   */
+  properties?: string[] | null;
 };
 
-// RFC 8620 (5.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.1
-// can return error requestTooLarge
+/**
+ * RFC 8620 (5.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.1
+ * can return error requestTooLarge
+ */
 export type GetResponse<T = unknown> = {
   accountId: Id;
   state: string;
@@ -122,43 +158,65 @@ export type GetResponse<T = unknown> = {
   notFound: Id[];
 };
 
-// RFC 8620 (5.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.2
+/**
+ * RFC 8620 (5.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.2
+ */
 export type ChangesRequest = {
   accountId: Id;
-  sinceState: string; // state from /get response
-  maxChanges: number; // uint, > 0
+  /**
+   * state from /get response
+   */
+  sinceState: string;
+  /**
+   * uint, > 0
+   */
+  maxChanges: number;
 };
 
-// RFC 8620 (5.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.2
-// can return error cannotCalculateChanges
+/**
+ * RFC 8620 (5.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.2
+ * can return error cannotCalculateChanges
+ */
 export type ChangesResponse = {
   accountId: Id;
   oldState: string;
   newState: string;
-  hasMoreChanges: boolean; // if false is the current server state else client may call /changes again with newState
+  /**
+   * if false is the current server state else client may call /changes again with newState
+   */
+  hasMoreChanges: boolean;
   created: Id[];
   updated: Id[];
   destroyed: Id[];
 };
 
-// RFC 8620 (5.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.3
+/**
+ * RFC 8620 (5.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.3
+ */
 export type SetRequest = {
   accountId: Id;
-  ifInState?: string | null; // state from /get response. If null use current state
+  /**
+   * state from /get response. If null use current state
+   */
+  ifInState?: string | null;
   create: Record<Id, any> | null;
   update: Record<Id, any> | null;
   destroy: Id[] | null;
 };
 
-// RFC 8620 (5.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.3
+/**
+ * RFC 8620 (5.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.3
+ */
 export type SetError = {
   type: string;
   description: string | null;
   properties: string[] | null;
 };
 
-// RFC 8620 (5.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.3
-// can return error requestTooLarge, stateMismatch
+/**
+ * RFC 8620 (5.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.3
+ * can return error requestTooLarge, stateMismatch
+ */
 export type SetResponse = {
   accountId: Id;
   oldState: string;
@@ -171,19 +229,32 @@ export type SetResponse = {
   notDestroyed?: Record<Id, SetError>;
 };
 
-// RFC 8620 (5.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.4
+/**
+ * RFC 8620 (5.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.4
+ */
 export type CopyRequest = {
   fromAccountId: Id;
-  ifFromInState?: string | null; // state from /get response. If null use current state
+  /**
+   * state from /get response. If null use current state
+   */
+  ifFromInState?: string | null;
   accountId: Id;
-  ifInState?: string | null; // state from /get response. If null use current state
+  /**
+   * state from /get response. If null use current state
+   */
+  ifInState?: string | null;
   create?: Record<Id, any> | null;
-  onSuccessDestroyOriginal?: boolean; // default: false
+  /**
+   * default: false
+   */
+  onSuccessDestroyOriginal?: boolean;
   destroyFromIfInState?: string | null;
 };
 
-// RFC 8620 (5.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.4
-// can return error alreadyExists, fromAccountNotFound, fromAccountNotSupportedByMethod, stateMismatch
+/**
+ * RFC 8620 (5.4) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.4
+ * can return error alreadyExists, fromAccountNotFound, fromAccountNotSupportedByMethod, stateMismatch
+ */
 export type CopyResponse = {
   fromAccountId: Id;
   accountId: Id;
@@ -193,36 +264,61 @@ export type CopyResponse = {
   notCreated: Record<Id, SetError> | null;
 };
 
-// RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
-export type FilterCondition = {};
+/**
+ * RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
+ */
+export type FilterCondition = object;
 
-// RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
+/**
+ * RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
+ */
 export type FilterOperator = {
   operator: "AND" | "OR" | "NOT";
   conditions: (FilterOperator | FilterCondition)[];
 };
 
-// RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
+/**
+ * RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
+ */
 export type Comparator = {
   property: string;
-  isAscending?: boolean; // default: true
+  /**
+   * default: true
+   */
+  isAscending?: boolean;
   collation?: string;
 };
 
-// RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
+/**
+ * RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
+ */
 export type QueryRequest = {
   accountId: Id;
   filter?: FilterOperator | FilterCondition | null;
   sort?: Comparator[] | null;
-  position?: number; // default: 0. Like index in array. Negative values supported
+  /**
+   * default: 0. Like index in array. Negative values supported
+   */
+  position?: number;
   anchor?: Id | null;
-  anchorOffset?: number; // default: 0. Negative values supported
-  limit?: number | null; // uint
-  calculateTotal?: boolean; // default: false
+  /**
+   * default: 0. Negative values supported
+   */
+  anchorOffset?: number;
+  /**
+   * uint
+   */
+  limit?: number | null;
+  /**
+   * default: false
+   */
+  calculateTotal?: boolean;
 };
 
-// RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
-// can return error anchorNotFound, unsupportedSort, unsupportedFilter
+/**
+ * RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
+ * can return error anchorNotFound, unsupportedSort, unsupportedFilter
+ */
 export type QueryResponse = {
   accountId: Id;
   queryState: string;
@@ -233,7 +329,9 @@ export type QueryResponse = {
   limit?: number; // uint
 };
 
-// RFC 8620 (5.6) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.6
+/**
+ * RFC 8620 (5.6) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.6
+ */
 export type QueryChangesRequest = {
   accountId: Id;
   filter?: FilterOperator | FilterCondition | null;
@@ -244,14 +342,18 @@ export type QueryChangesRequest = {
   calculateTotal?: boolean; // default: false
 };
 
-// RFC 8620 (5.6) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.6
+/**
+ * RFC 8620 (5.6) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.6
+ */
 export type AddedItem = {
   id: Id;
   index: number; // uint
 };
 
-// RFC 8620 (5.6) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.6
-// can return error tooManyChanges, cannotCalculateChanges
+/**
+ * RFC 8620 (5.6) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.6
+ * can return error tooManyChanges, cannotCalculateChanges
+ */
 export type QueryChangesResponse = {
   accountId: Id;
   oldQueryState: string;
@@ -261,23 +363,32 @@ export type QueryChangesResponse = {
   added: AddedItem[];
 };
 
-// RFC 8620 (6.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.1
+/**
+ * RFC 8620 (6.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.1
+ */
 export type UploadingBlobResponse = {
   accountId: Id;
   blobId: Id;
   type: string;
-  size: number; // uint
+  /**
+   * uint
+   */
+  size: number;
 };
 
-// RFC 8620 (6.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.3
+/**
+ * RFC 8620 (6.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.3
+ */
 export type CopyBlobRequest = {
   fromAccountId: Id;
   accountId: Id;
   blobIds: Id[];
 };
 
-// RFC 8620 (6.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.3
-// can return error fromAccountNotFound
+/**
+ * RFC 8620 (6.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.3
+ * can return error fromAccountNotFound
+ */
 export type CopyBlobResponse = {
   fromAccountId: Id;
   accountId: Id;
