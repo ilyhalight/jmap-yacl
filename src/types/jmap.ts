@@ -267,7 +267,7 @@ export type CopyResponse = {
 /**
  * RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
  */
-export type FilterCondition = object;
+export type FilterCondition = Record<string, unknown>;
 
 /**
  * RFC 8620 (5.5) - https://datatracker.ietf.org/doc/html/rfc8620#section-5.5
