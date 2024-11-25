@@ -9,7 +9,9 @@ export default class BlobAPI extends BaseAPI {
     this.session = client.session;
   }
 
-  // RFC 8620 (6.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.2
+  /**
+   * RFC 8620 (6.2) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.2
+   */
   async download(accountId: JMAP.Id, blobId: JMAP.Id, contentType: string) {
     if (!this.session?.downloadUrl) {
       return {
@@ -43,11 +45,13 @@ export default class BlobAPI extends BaseAPI {
       return (await res.json()) as JMAP.ProblemDetails;
     }
 
-    return res.text();
+    return res.arrayBuffer();
   }
 
-  // RFC 8620 (6.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.1
-  async upload(accountId: JMAP.Id, content: any) {
+  /**
+   * RFC 8620 (6.1) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.1
+   */
+  async upload(accountId: JMAP.Id, content: Blob) {
     if (!this.session?.uploadUrl) {
       return {
         type: "Unauthorized",
@@ -76,6 +80,9 @@ export default class BlobAPI extends BaseAPI {
       | JMAP.UploadingBlobResponse;
   }
 
+  /**
+   * RFC 8620 (6.3) - https://datatracker.ietf.org/doc/html/rfc8620#section-6.3
+   */
   async copy(args: JMAP.CopyBlobRequest) {
     return this.client.request<JMAP.CopyBlobResponse>("/jmap", {
       using: [JMAP.Using.mail],
