@@ -2,6 +2,9 @@
 .pytest_cache
 .env
 
+dist/*
+docs/*
+
 # dependencies
 /node_modules
 /.pnp
