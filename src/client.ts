@@ -7,7 +7,7 @@ import ThreadAPI from "./api/thread";
 import EmailAPI from "./api/email";
 import SearchSnippetAPI from "./api/searchSnippet";
 import IdentityAPI from "./api/identity";
-import VacationResponseAPI from "./api/VacationResponse";
+import VacationResponseAPI from "./api/vacationResponse";
 import EmailSubmissionAPI from "./api/emailSubmission";
 import BlobAPI from "./api/blob";
 
@@ -17,10 +17,10 @@ type RequestOpts = {
 };
 
 export default class JMAPClient {
-  static userAgent: string = `jmap-yacl/${version}`;
+  static userAgent = `jmap-yacl/${version}`;
 
   readonly authToken: string;
-  session: JMAP.Session | undefined;
+  session!: JMAP.Session;
 
   core!: CoreAPI;
   mailbox!: MailBoxAPI;
@@ -59,21 +59,19 @@ export default class JMAPClient {
     url: string,
     opts: RequestOpts | undefined = undefined,
   ) {
-    const isAbsolute =
-      url.startsWith("http") || typeof this.session === "undefined";
-    const reqURL = new URL(
-      isAbsolute ? url : (this.session as JMAP.Session).apiUrl + url,
-    );
-    reqURL.protocol = "https:"; // RFC 8620 (1.7) - https://datatracker.ietf.org/doc/html/rfc8620#section-1.7
+    const isAbsolute = url.startsWith("http");
+    const reqURL = new URL(isAbsolute ? url : this.session.apiUrl + url);
+    // RFC 8620 (1.7) - https://datatracker.ietf.org/doc/html/rfc8620#section-1.7
+    reqURL.protocol = "https:";
 
     const response = await fetch(reqURL.href, {
       method: isAbsolute ? "GET" : "POST",
-      ...(isAbsolute && !opts
+      ...(isAbsolute || opts === undefined
         ? {}
         : {
             body: JSON.stringify({
-              methodCalls: [(opts as RequestOpts).invocation],
-              using: (opts as RequestOpts).using,
+              methodCalls: [opts.invocation],
+              using: opts.using,
             }),
           }),
       headers: {
@@ -103,18 +101,12 @@ export default class JMAPClient {
 
       this.session = result as JMAP.Session;
     } catch (err) {
-      this.session = undefined;
-      console.error("Failed get session from url:", err);
+      throw new Error(
+        `Failed to get session from url, because: ${(err as Error).message}`,
+      );
     }
 
     this.updateAPI();
     return this;
-  }
-
-  /**
-   * @deprecated Migrate to client.blob.download. This method will be removed in a future update.
-   */
-  async downloadBlob(accountId: JMAP.Id, blobId: JMAP.Id, contentType: string) {
-    return await this.blob.download(accountId, blobId, contentType);
   }
 }
