@@ -3,6 +3,7 @@
   "compilerOptions": {
     // Enable latest features
     "lib": ["ESNext"],
+    "types": ["bun-types"],
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
@@ -12,7 +13,6 @@
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
-    "verbatimModuleSyntax": true,
     "noEmit": true,
 
     // Best practices
@@ -24,5 +24,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
-  }
+  },
+  "exclude": ["dist/*"]
 }

@@ -25,8 +25,8 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
-    "rootDir": "src"
+    "rootDir": "src",
+    "outDir": "dist"
   },
-  "exclude": ["./src/*.test.ts", "./dist", "./tests", "./typebox-gen.ts"],
-  "outDir": "./dist"
+  "exclude": ["./dist", "./tests", "./scripts/*"]
 }
