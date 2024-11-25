@@ -9,13 +9,13 @@
 
 ## Установка
 
-Установка в Bun:
+Установка через Bun:
 
 ```bash
-bun add jmap-yacl
+bun install jmap-yacl
 ```
 
-Установка в NPM:
+Установка через NPM:
 
 ```bash
 npm install jmap-yacl
@@ -23,7 +23,7 @@ npm install jmap-yacl
 
 ## Информация
 
-Библиотека разрабатывалась и тестировалась с использованием [stalwart mail-server](https://github.com/stalwartlabs/mail-server), работа с другими JMAP серверами не гарантирована (но в теории должна быть из-за соответствия RFC). Поддерживается только базовая аутентификация (username + password).
+Библиотека разрабатывалась и тестировалась с использованием [stalwart mail-server](https://github.com/stalwartlabs/mail-server), работа с другими JMAP серверами не гарантирована (в теории должна быть из-за соответствия RFC). Поддерживается только базовая аутентификация (username + password).
 
 Реализовано:
 
@@ -94,28 +94,9 @@ bun install
 
 3. Запустите сборку:
 
-   3.0. Полная сборка:
-
-   ```bash
-   bun build:bun
-   ```
-
-   3.1. Если вы хотите собрать только typescript типы:
-
-   ```bash
-   bun  build:declaration
-   ```
-
-   3.2. Если вы хотите собрать только typebox типы:
-
-   ```bash
-   bun build:typebox
-   ```
-
-4. Установите pre-commit хук:
-   ```bash
-   bun prepare
-   ```
+```bash
+bun build:bun
+```
 
 ## Тесты
 

@@ -9,13 +9,13 @@ Another lightweight client library for working with the JMAP, which supports wor
 
 ## Installation
 
-Bun install:
+Install via Bun:
 
 ```bash
-bun add jmap-yacl
+bun install jmap-yacl
 ```
 
-NPM install:
+Install via NPM:
 
 ```bash
 npm install jmap-yacl
@@ -23,7 +23,7 @@ npm install jmap-yacl
 
 ## Information
 
-The library was developed and tested using [stalwart mail-server](https://github.com/stalwartlabs/mail-server), work with other JMAP servers is not guaranteed (but in theory it should be due to RFC compliance). Only basic authentication (username + password) is supported.
+The library was developed and tested using [stalwart mail-server](https://github.com/stalwartlabs/mail-server), work with other JMAP servers is not guaranteed (in theory it should be due to RFC compliance). Only basic authentication (username + password) is supported.
 
 Implemented:
 
@@ -94,28 +94,9 @@ bun install
 
 3. Run the build:
 
-   3.0. Full build:
-
-   ```bash
-   bun build:bun
-   ```
-
-   3.1. If you want to build only typescript types:
-
-   ```bash
-   bun build:declaration
-   ```
-
-   3.2. If you want to build only type box types:
-
-   ```bash
-   bun build:typebox
-   ```
-
-4. Install the pre-commit hook:
-   ```bash
-   bun prepare
-   ```
+```bash
+bun build:bun
+```
 
 ## Tests
 
