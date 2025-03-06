@@ -95,7 +95,7 @@ bun install
 3. Run the build:
 
 ```bash
-bun build:bun
+bun build:all
 ```
 
 ## Tests

@@ -95,7 +95,7 @@ bun install
 3. Запустите сборку:
 
 ```bash
-bun build:bun
+bun build:all
 ```
 
 ## Тесты
