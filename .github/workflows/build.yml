@@ -22,7 +22,7 @@ jobs:
         run: bun install
 
       - name: Build 🚧
-        run: bun build:bun
+        run: bun build:all
 
       - name: Test 🪲
         run: bun test
