@@ -28,5 +28,5 @@
     "rootDir": "src",
     "outDir": "dist"
   },
-  "exclude": ["./dist", "./tests", "./scripts/*"]
+  "include": ["./src"]
 }
