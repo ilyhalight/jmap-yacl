@@ -1,3 +1,8 @@
+# 1.2.1
+
+- Rewritted typebox generation logic with `@toil/typebox-genx`
+- Updated dev depends
+
 # 1.2.0
 
 ## Client
